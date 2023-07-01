@@ -31,7 +31,6 @@ app.use(express.urlencoded({extended: true}));
 
 if(process.env.NODE_ENV !== 'production'){
     dotenv.config();
-
 }
 
 const PORT = process.env.PORT || 3000;
@@ -52,12 +51,22 @@ const customers = [
                 
 const customer = new Customer({
     name:'Sumanth',
-    industry:'Losers'
+    industry:'Sumanth is a big Loser'
 });
-customer.save();
+// customer.save();
 
 app.get('/', (req, res) => {
-    res.send(customer);
+    res.send("welcome loser sumanth");
+});
+
+app.get('/api/customers', async(req, res) => {
+    // console.log(await mongoose.connection.db.listCollections().toArray());  // // to print the db collections list after we hit send on postman
+    try{
+        const result = await Customer.find();
+        res.send({"customers":result});
+    }catch(e) {
+        res.status(500).json({error: e.message})
+    } 
 });
 
 app.get('/api/customers', (req, res) => {
@@ -65,9 +74,20 @@ app.get('/api/customers', (req, res) => {
 });
 
 
-app.post('/api/customers', (req, res) => {
+app.post('/api/customers', async (req, res) => {
+    
     console.log(req.body);
-    res.send(req.body);
+    const customer = new Customer(req.body);
+    try{
+          //({ name:req.body.name,
+        // industry: eq.body.industry });
+        await customer.save();
+        res.status(201).json({customer});
+    }catch(e){
+        res.status(400).json({error: e.message});
+    };
+
+    // res.send(req.body);
 });
 
 app.post('/', (req,res) => {

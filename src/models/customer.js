@@ -1,7 +1,11 @@
 import mongoose from 'mongoose';
 
 const customerSchema = new mongoose.Schema({
-    name:String,
+    name:{
+        type: String,
+        required: true
+    },
+    // name:String,
     industry:String
 });
 

@@ -1,0 +1,7 @@
+POST http://localhost:3005/api/customers
+Content-Type: application/json
+
+{
+    "name": "Sumanth",
+    "industry": "Big"
+}
