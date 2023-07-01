@@ -18,12 +18,24 @@
 
 import express from 'express';
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+
+dotenv.config();
 const app = express();
 mongoose.set('strictQuery',false);
 
+
+
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-const PORT = 3000;
+
+if(process.env.NODE_ENV !== 'production'){
+    dotenv.config();
+
+}
+
+const PORT = process.env.PORT || 3000;
+const CONNECTION = process.env.CONNECTION;
 
 const customers = [ 
     {
@@ -41,7 +53,7 @@ const customers = [
 
 
 app.get('/', (req, res) => {
-    res.send('Welcome');
+    res.send('Welcome SUMANTH');
 });
 
 app.get('/api/customers', (req, res) => {
@@ -63,7 +75,7 @@ app.post('/', (req,res) => {
 
 const start = async() => {
     try{
-        await mongoose.connect('mongodb+srv://sumanth1399:Sumodeepu@cluster0.05oxyqt.mongodb.net/?retryWrites=true&w=majority');
+        await mongoose.connect(CONNECTION);
     
         app.listen(PORT, () => {
             console.log('App Listening on port ' + PORT);
