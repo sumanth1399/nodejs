@@ -19,8 +19,8 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import Customer from './models/customer.js';
 
-dotenv.config();
 const app = express();
 mongoose.set('strictQuery',false);
 
@@ -50,10 +50,14 @@ const customers = [
         "industry":'movies'
         }];
                 
-
+const customer = new Customer({
+    name:'Sumanth',
+    industry:'Losers'
+});
+customer.save();
 
 app.get('/', (req, res) => {
-    res.send('Welcome SUMANTH');
+    res.send(customer);
 });
 
 app.get('/api/customers', (req, res) => {
