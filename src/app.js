@@ -73,9 +73,13 @@ app.get('/api/customers', (req, res) => {
     res.send({"customers":customers});
 });
 
+app.get('/api/customers/:id/:test',(req,res) =>{  
+    res.json({requestParams: req.params,
+    requestQuery: req.query});
+}); 
+// above portion is to filter the data using id, and our requirements based on age, address and all.We added test cause sometimes it depends on each other, it is nested one.
 
 app.post('/api/customers', async (req, res) => {
-    
     console.log(req.body);
     const customer = new Customer(req.body);
     try{
