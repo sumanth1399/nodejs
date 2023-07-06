@@ -5,3 +5,11 @@ Content-Type: application/json
     "name": "Sumanth",
     "industry": "Big"
 }
+
+PUT  http://localhost:3005/api/customers/:id
+Content-Type: application/json
+
+{
+    "name": "Pooj",
+    "industry": "student1"
+}

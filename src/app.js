@@ -69,15 +69,74 @@ app.get('/api/customers', async(req, res) => {
     } 
 });
 
-app.get('/api/customers', (req, res) => {
-    res.send({"customers":customers});
+// app.get('/api/customers', (req, res) => {
+//     res.send({"customers":customers});
+// });
+
+
+app.get('/api/customers/:id/',async(req,res) =>{  
+    console.log({requestParams: req.params,
+    requestQuery: req.query});
+    try{
+        const {id:customerId} = req.params
+        console.log(customerId);
+        const customer = await Customer.findById(customerId);
+        console.log(customer);
+        if(!customer){
+            return res.status(404).json({ error:'Customer not Found' }) 
+        }else{
+            res.json({
+                message:"Customer found",customer
+            });
+        } 
+    }catch(e){
+        res.status(500).json({error: e.message});
+        // res.status(500).json({error: 'Something is wrong'});
+    }
 });
 
-app.get('/api/customers/:id/:test',(req,res) =>{  
-    res.json({requestParams: req.params,
-    requestQuery: req.query});
-}); 
 // above portion is to filter the data using id, and our requirements based on age, address and all.We added test cause sometimes it depends on each other, it is nested one.
+// used res.json as we didn't want output to be shown in terminal and wanted the response to be shown in postman. if we want output to be shown can use console.log
+// we use await to connect the code to something for example database, webpage
+
+
+app.put('/api/customers/:id', async (req, res) => {
+    try {
+        const { id: customerId } = req.params;
+        const { name, industry } = req.body;
+
+        // Perform any necessary validation or data checks here
+        
+        // Update the customer in your database or data store
+        // For example, using Mongoose:
+        const result = await Customer.replaceOne({_id: customerId},req.body);
+
+        // Handle if the customer doesn't exist
+        if (!result) {
+            return res.status(404).json({ error: 'Customer not found' });
+        }
+
+        // Return the updated customer in the response
+        return res.json(result);
+    } catch (error) {
+        // Handle any potential errors that occurred during the update process
+        console.error(error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// app.put('api/customers/:id', async(req,res) => {
+//     const {id:customerId} = req.params;
+//     try{
+//         const result = await Customer.replaceOne({_id: customerId},req.body);
+//         console.log(result); 
+//         res.json({
+//             modifiedCount :result.modifiedCount
+//         });
+//     }catch(e){
+//         res.status(500).json(e.message);
+//     }; 
+// });
 
 app.post('/api/customers', async (req, res) => {
     console.log(req.body);
@@ -97,7 +156,6 @@ app.post('/api/customers', async (req, res) => {
 app.post('/', (req,res) => {
     res.send("This is the Post Request!");
 })
-
 
 
 
