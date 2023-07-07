@@ -99,31 +99,42 @@ app.get('/api/customers/:id/',async(req,res) =>{
 // used res.json as we didn't want output to be shown in terminal and wanted the response to be shown in postman. if we want output to be shown can use console.log
 // we use await to connect the code to something for example database, webpage
 
+app.delete('/api/customers/:id', async function (req, res) {
+        try {
+            const { id: customerId } = req.params;
+            const result = await Customer.deleteOne({ _id: customerId });
 
-app.put('/api/customers/:id', async (req, res) => {
-    try {
-        const { id: customerId } = req.params;
-        const { name, industry } = req.body;
-
-        // Perform any necessary validation or data checks here
-        
-        // Update the customer in your database or data store
-        // For example, using Mongoose:
-        const result = await Customer.replaceOne({_id: customerId},req.body);
-
-        // Handle if the customer doesn't exist
-        if (!result) {
-            return res.status(404).json({ error: 'Customer not found' });
+            if (result.deletedCount === 0) {
+                return res.status(404).json({ error: 'Customer not found' });
+            }else{
+                return res.json({ message: 'Customer deleted successfully' });
+            }
+        } catch (error) {
+            res.status(500).json({ error: error.message });
         }
+    });
 
-        // Return the updated customer in the response
-        return res.json(result);
-    } catch (error) {
-        // Handle any potential errors that occurred during the update process
-        console.error(error);
-        return res.status(500).json({ error: 'Internal server error' });
-    }
-});
+    app.put('/api/customers/:id', async function (req, res) {
+            try {
+                const { id: customerId } = req.params;
+                const result = await Customer.replaceOne({_id: customerId},req.body);
+                // const result = await Customer.replaceOne(
+                //     customerId,
+                //     { name, industry },
+                //     { new: true }
+                // );
+
+                if (!result) {
+                    return res.status(404).json({ error: 'Customer not found' });
+                }else{
+                    return res.json({ message: 'Customer updated successfully', customer: result });
+                }
+
+                
+            } catch (error) {
+                res.status(500).json({ error: error.message });
+            }
+        });
 
 // app.put('api/customers/:id', async(req,res) => {
 //     const {id:customerId} = req.params;
