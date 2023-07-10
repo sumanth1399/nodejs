@@ -162,6 +162,40 @@ app.patch('/api/customers/:id', async function (req, res) {
         res.status(500).json({ error: error.message });
     }
 });
+
+app.patch('/api/orders/:id', async function (req, res) {
+    try {
+        const { id: orderId } = req.params;
+        const result = await Customer.findOneAndUpdate({'orders._id': orderId},{$set:{'orders.$':req.body}},{new:true}); 
+        if (!result) {
+            return res.status(404).json({ error: 'Customer not found' });
+        }else{
+            return res.json({ message: 'Customer updated successfully', customer: result });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+app.get('/api/orders/:id',async function (req,res){
+    try{
+        // const {id :orderId} = req.params;
+        // const result = await Customer.findOne({'orders._id':orderId});
+        const result = await Customer.findOne({'orders._id':req.params.id});
+        if (!result) {
+            return res.status(404).json({ error: 'Order not found' });
+        }else{
+            return res.json({ message: 'Order Found successfully', customer: result });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+
+// this patch it to update nested data
+
+
 // app.put('api/customers/:id', async(req,res) => {
 //     const {id:customerId} = req.params;
 //     try{
