@@ -24,8 +24,6 @@ import Customer from './models/customer.js';
 const app = express();
 mongoose.set('strictQuery',false);
 
-
-
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
@@ -114,10 +112,13 @@ app.delete('/api/customers/:id', async function (req, res) {
         }
     });
 
+// delete is used to delete any field
+
     app.put('/api/customers/:id', async function (req, res) {
             try {
                 const { id: customerId } = req.params;
-                const result = await Customer.replaceOne({_id: customerId},req.body);
+                const result = await Customer.findOneAndReplace({_id: customerId},req.body,{new:true});
+                // const result = await Customer.replaceOne({_id: customerId},req.body);
                 // const result = await Customer.replaceOne(
                 //     customerId,
                 //     { name, industry },
@@ -127,7 +128,7 @@ app.delete('/api/customers/:id', async function (req, res) {
                 if (!result) {
                     return res.status(404).json({ error: 'Customer not found' });
                 }else{
-                    return res.json({ message: 'Customer updated successfully', customer: result });
+                    return res.json({ message: 'Customer updated successfully using put method', customer: result });
                 }
 
                 
@@ -136,6 +137,31 @@ app.delete('/api/customers/:id', async function (req, res) {
             }
         });
 
+// use put to update a id. Patch is also similar to put but the only difference is using put you need to write the whole structure but for
+// patch you can just update the required field and the rest will be same.
+
+app.patch('/api/customers/:id', async function (req, res) {
+    try {
+        const { id: customerId } = req.params;
+        const result = await Customer.findOneAndUpdate({_id: customerId},req.body,{new:true});
+        // const result = await Customer.replaceOne({_id: customerId},req.body);
+        // const result = await Customer.replaceOne(
+        //     customerId,
+        //     { name, industry },
+        //     { new: true }
+        // );
+
+        if (!result) {
+            return res.status(404).json({ error: 'Customer not found' });
+        }else{
+            return res.json({ message: 'Customer updated successfully', customer: result });
+        }
+
+        
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 // app.put('api/customers/:id', async(req,res) => {
 //     const {id:customerId} = req.params;
 //     try{
@@ -163,6 +189,8 @@ app.post('/api/customers', async (req, res) => {
 
     // res.send(req.body);
 });
+
+// use post to create a new id.
 
 app.post('/', (req,res) => {
     res.send("This is the Post Request!");

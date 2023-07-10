@@ -6,7 +6,12 @@ const customerSchema = new mongoose.Schema({
         required: true
     },
     // name:String,
-    industry:String
+    industry:String,
+    orders: [{
+        item: String,
+        price: Number
+        }
+    ]   
 });
 
 const Customer = mongoose.model('Customer', customerSchema);
